@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asset Test Page</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        h1, h2 {
+            margin-top: 0;
+        }
+        
+        .test-section {
+            margin: 1.5rem 0;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+        
+        .asset-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 0.5rem 0;
+            padding: 0.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+        }
+        
+        .status {
+            padding: 0.25rem 0.5rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        
+        .found {
+            background: #4ade80;
+            color: #166534;
+        }
+        
+        .missing {
+            background: #f87171;
+            color: #7f1d1d;
+        }
+        
+        button {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 0.25rem;
+        }
+        
+        button:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+        
+        .instructions {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 1rem;
+            border-radius: 10px;
+            margin-top: 1rem;
+        }
+        
+        code {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 0.2rem 0.4rem;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎮 Rock Paper Scissors - Asset Test</h1>
+        <p>This page helps you test which assets are available for your game.</p>
+        
+        <div class="test-section">
+            <h2>🎵 Sound Assets</h2>
+            <div id="sound-tests">
+                <!-- Will be populated by JavaScript -->
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h2>🖼️ Image Assets</h2>
+            <div id="image-tests">
+                <!-- Will be populated by JavaScript -->
+            </div>
+        </div>
+        
+        <div class="instructions">
+            <h3>📋 Instructions</h3>
+            <ol>
+                <li>Add asset files to the <code>/assets</code> folder</li>
+                <li>Refresh this page to test asset detection</li>
+                <li>Click "Test" buttons to verify sounds work</li>
+                <li>Green status = asset found, Red status = asset missing</li>
+                <li>Go back to the main game to see assets in action!</li>
+            </ol>
+            
+            <p><strong>Note:</strong> This is a simple test page. The actual game has more sophisticated asset loading and fallback systems.</p>
+            
+            <button onclick="window.location.href='../index.html'" style="background: #4ade80; color: #166534; font-weight: bold;">
+                🎮 Back to Game
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Asset configuration (same as main game)
+        const assets = {
+            sounds: [
+                'click.mp3',
+                'win.mp3', 
+                'lose.mp3',
+                'tie.mp3',
+                'game-win.mp3',
+                'game-lose.mp3'
+            ],
+            images: [
+                'background.jpg',
+                'rock-icon.png',
+                'paper-icon.png', 
+                'scissors-icon.png',
+                'rock-display.png',
+                'paper-display.png',
+                'scissors-display.png'
+            ]
+        };
+
+        // Test sound assets
+        function testSounds() {
+            const container = document.getElementById('sound-tests');
+            
+            assets.sounds.forEach(soundFile => {
+                const audio = new Audio(soundFile);
+                const item = document.createElement('div');
+                item.className = 'asset-item';
+                
+                const name = document.createElement('span');
+                name.textContent = soundFile;
+                
+                const controls = document.createElement('div');
+                
+                const status = document.createElement('span');
+                status.className = 'status missing';
+                status.textContent = 'Testing...';
+                
+                const testBtn = document.createElement('button');
+                testBtn.textContent = 'Test';
+                testBtn.disabled = true;
+                
+                audio.addEventListener('canplaythrough', () => {
+                    status.className = 'status found';
+                    status.textContent = 'Found';
+                    testBtn.disabled = false;
+                    testBtn.onclick = () => {
+                        audio.currentTime = 0;
+                        audio.play();
+                    };
+                });
+                
+                audio.addEventListener('error', () => {
+                    status.className = 'status missing';
+                    status.textContent = 'Missing';
+                });
+                
+                controls.appendChild(status);
+                controls.appendChild(testBtn);
+                item.appendChild(name);
+                item.appendChild(controls);
+                container.appendChild(item);
+            });
+        }
+
+        // Test image assets
+        function testImages() {
+            const container = document.getElementById('image-tests');
+            
+            assets.images.forEach(imageFile => {
+                const img = new Image();
+                const item = document.createElement('div');
+                item.className = 'asset-item';
+                
+                const name = document.createElement('span');
+                name.textContent = imageFile;
+                
+                const status = document.createElement('span');
+                status.className = 'status missing';
+                status.textContent = 'Testing...';
+                
+                img.onload = () => {
+                    status.className = 'status found';
+                    status.textContent = `Found (${img.width}x${img.height})`;
+                };
+                
+                img.onerror = () => {
+                    status.className = 'status missing';
+                    status.textContent = 'Missing';
+                };
+                
+                img.src = imageFile;
+                
+                item.appendChild(name);
+                item.appendChild(status);
+                container.appendChild(item);
+            });
+        }
+
+        // Initialize tests
+        document.addEventListener('DOMContentLoaded', () => {
+            testSounds();
+            testImages();
+        });
+    </script>
+</body>
+</html>
